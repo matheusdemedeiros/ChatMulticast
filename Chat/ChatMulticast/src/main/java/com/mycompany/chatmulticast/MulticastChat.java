@@ -170,7 +170,7 @@ public class MulticastChat extends javax.swing.JFrame {
         try {
             socket.send(msgOut);
         } catch (IOException ex) {
-            Logger.getLogger(MulticastChat.class.getName()).log(Level.SEVERE, null, ex);
+
         }
     }//GEN-LAST:event_jButtonSendActionPerformed
 
