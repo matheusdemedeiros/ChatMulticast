@@ -6,9 +6,6 @@
 package com.mycompany.chatmulticast;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,14 +15,7 @@ import java.util.logging.Logger;
  */
 public class MulticastChat extends javax.swing.JFrame {
 
-    /**
-     * Creates new form MulticastChat
-     */
-    MulticastSocket socket;
-    int port = 50000;
-    String groupAddres;
-    InetAddress group;
-    String msg;
+    private ControllerChat controllerChat;
 
     public MulticastChat() {
         initComponents();
@@ -67,6 +57,11 @@ public class MulticastChat extends javax.swing.JFrame {
 
         jButtonLeave.setText("Leave");
         jButtonLeave.setEnabled(false);
+        jButtonLeave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLeaveActionPerformed(evt);
+            }
+        });
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -148,31 +143,49 @@ public class MulticastChat extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCloseActionPerformed
 
     private void jButtonJoinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJoinActionPerformed
-        String groupAddres = jTextFieldMulticastAddress.getText();
         try {
-            socket = new MulticastSocket(port);
-            group = InetAddress.getByName(groupAddres);
-            InetAddress group = InetAddress.getByName(groupAddres);
-            socket.joinGroup(group);
-            jTextArea1.append("Join in " + groupAddres + ":" + port);
-            jButtonLeave.setEnabled(true);
-            jButtonSend.setEnabled(true);
+            this.controllerChat = new ControllerChat(50000, this.jTextFieldMulticastAddress.getText());
+            this.controllerChat.joinGroup();
+            this.jTextArea1.append("Bem vindo ao grupo: " + this.jTextFieldMulticastAddress.getText() + "\n");
+            this.jButtonLeave.setEnabled(true);
+            this.jButtonSend.setEnabled(true);
+            this.jButtonJoin.setEnabled(false);
 
-        } catch (Exception e) {
-            jTextArea1.append("Erro!! " + e.getMessage());
+            this.controllerChat.start();
+            while (true) {
+                if (this.controllerChat.getMsgIn() != null) {
+                    if (this.controllerChat.getMsgIn().getData() != null) {
+                        String message = this.controllerChat.getMessage();
+                        this.jTextArea1.append("<" + this.controllerChat.getMsgIn().getAddress().getHostName() + ">: " + message + "\n");
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            this.jTextArea1.append("\nErro ao entrar no grupo!!\nErro: " + ex.getMessage() + "\n");
         }
-
     }//GEN-LAST:event_jButtonJoinActionPerformed
 
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
-        byte[] data = msg.getBytes();
-        DatagramPacket msgOut = new DatagramPacket(data, data.length, group, port);
         try {
-            socket.send(msgOut);
+            this.controllerChat.sendMessage(this.jTextFieldMessage.getText());
+            this.jTextFieldMessage.setText("");
         } catch (IOException ex) {
-
+            this.jTextArea1.append("\nErro ao enviar mensagem!!\nErro: " + ex.getMessage() + "\n");
         }
     }//GEN-LAST:event_jButtonSendActionPerformed
+
+    private void jButtonLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLeaveActionPerformed
+        try {
+            this.controllerChat.leaveGroup();
+            this.jTextArea1.append("Saiu do grupo: " + this.jTextFieldMulticastAddress.getText() + "\n");
+            this.jButtonLeave.setEnabled(false);
+            this.jButtonSend.setEnabled(false);
+            this.jButtonJoin.setEnabled(true);
+        } catch (IOException ex) {
+            this.jTextArea1.append("\nErro ao sair no grupo!!\nErro: " + ex.getMessage() + "\n");
+        }
+
+    }//GEN-LAST:event_jButtonLeaveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -222,4 +235,5 @@ public class MulticastChat extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldMessage;
     private javax.swing.JTextField jTextFieldMulticastAddress;
     // End of variables declaration//GEN-END:variables
+
 }
