@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 public class MulticastChat extends javax.swing.JFrame {
 
     private ControllerChat controllerChat;
+    private Receiver receiver;
 
     public MulticastChat() {
         initComponents();
@@ -150,16 +151,10 @@ public class MulticastChat extends javax.swing.JFrame {
             this.jButtonLeave.setEnabled(true);
             this.jButtonSend.setEnabled(true);
             this.jButtonJoin.setEnabled(false);
-
-            this.controllerChat.start();
-            while (true) {
-                if (this.controllerChat.getMsgIn() != null) {
-                    if (this.controllerChat.getMsgIn().getData() != null) {
-                        String message = this.controllerChat.getMessage();
-                        this.jTextArea1.append("<" + this.controllerChat.getMsgIn().getAddress().getHostName() + ">: " + message + "\n");
-                    }
-                }
-            }
+            this.receiver = new Receiver(jTextArea1, this.controllerChat.getSocket());
+            this.receiver.start();
+            
+            
         } catch (IOException ex) {
             this.jTextArea1.append("\nErro ao entrar no grupo!!\nErro: " + ex.getMessage() + "\n");
         }
@@ -176,11 +171,13 @@ public class MulticastChat extends javax.swing.JFrame {
 
     private void jButtonLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLeaveActionPerformed
         try {
+            
             this.controllerChat.leaveGroup();
             this.jTextArea1.append("Saiu do grupo: " + this.jTextFieldMulticastAddress.getText() + "\n");
             this.jButtonLeave.setEnabled(false);
             this.jButtonSend.setEnabled(false);
             this.jButtonJoin.setEnabled(true);
+            
         } catch (IOException ex) {
             this.jTextArea1.append("\nErro ao sair no grupo!!\nErro: " + ex.getMessage() + "\n");
         }
