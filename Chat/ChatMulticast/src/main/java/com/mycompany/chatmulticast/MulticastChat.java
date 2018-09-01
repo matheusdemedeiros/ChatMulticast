@@ -5,9 +5,8 @@
  */
 package com.mycompany.chatmulticast;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -20,6 +19,8 @@ public class MulticastChat extends javax.swing.JFrame {
 
     public MulticastChat() {
         initComponents();
+        getRootPane().setDefaultButton(jButtonSend);
+
     }
 
     /**
@@ -64,11 +65,18 @@ public class MulticastChat extends javax.swing.JFrame {
             }
         });
 
+        jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
         jLabel2.setText("Message:");
+
+        jTextFieldMessage.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextFieldMessageFocusGained(evt);
+            }
+        });
 
         jButtonClose.setText("Close");
         jButtonClose.addActionListener(new java.awt.event.ActionListener() {
@@ -153,36 +161,35 @@ public class MulticastChat extends javax.swing.JFrame {
             this.jButtonJoin.setEnabled(false);
             this.receiver = new Receiver(jTextArea1, this.controllerChat.getSocket());
             this.receiver.start();
-            
-            
+
         } catch (IOException ex) {
             this.jTextArea1.append("\nErro ao entrar no grupo!!\nErro: " + ex.getMessage() + "\n");
         }
     }//GEN-LAST:event_jButtonJoinActionPerformed
 
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
-        try {
-            this.controllerChat.sendMessage(this.jTextFieldMessage.getText());
-            this.jTextFieldMessage.setText("");
-        } catch (IOException ex) {
-            this.jTextArea1.append("\nErro ao enviar mensagem!!\nErro: " + ex.getMessage() + "\n");
-        }
+
+        actionSend();
     }//GEN-LAST:event_jButtonSendActionPerformed
 
     private void jButtonLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLeaveActionPerformed
         try {
-            
+
             this.controllerChat.leaveGroup();
             this.jTextArea1.append("Saiu do grupo: " + this.jTextFieldMulticastAddress.getText() + "\n");
             this.jButtonLeave.setEnabled(false);
             this.jButtonSend.setEnabled(false);
             this.jButtonJoin.setEnabled(true);
-            
+
         } catch (IOException ex) {
             this.jTextArea1.append("\nErro ao sair no grupo!!\nErro: " + ex.getMessage() + "\n");
         }
 
     }//GEN-LAST:event_jButtonLeaveActionPerformed
+
+    private void jTextFieldMessageFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldMessageFocusGained
+
+    }//GEN-LAST:event_jTextFieldMessageFocusGained
 
     /**
      * @param args the command line arguments
@@ -198,16 +205,24 @@ public class MulticastChat extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MulticastChat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MulticastChat.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MulticastChat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MulticastChat.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MulticastChat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MulticastChat.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MulticastChat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MulticastChat.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -232,5 +247,24 @@ public class MulticastChat extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldMessage;
     private javax.swing.JTextField jTextFieldMulticastAddress;
     // End of variables declaration//GEN-END:variables
+
+    private void actionSend() {
+        if (!this.jTextFieldMessage.getText().isEmpty()) {
+            try {
+                this.controllerChat.sendMessage(this.jTextFieldMessage.getText());
+                this.jTextFieldMessage.setText("");
+            } catch (IOException ex) {
+                this.jTextArea1.append("\nErro ao enviar mensagem!!\nErro: " + ex.getMessage() + "\n");
+            }
+        }
+    }
+
+    public void keyReleased(KeyEvent ke) {
+        if (ke.getKeyCode() == 13) {
+            actionSend();
+            //this.jTextFieldMessage.setText("");
+            this.jTextFieldMessage.setFocusable(true);
+        }
+    }
 
 }
