@@ -147,7 +147,15 @@ public class MulticastChat extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseActionPerformed
-        System.exit(0);
+        try {
+            if (controllerChat.getSocket().getInetAddress() != null) {
+                controllerChat.getSocket().leaveGroup(controllerChat.getGroup());
+            }
+            controllerChat.getSocket().close();
+            System.exit(0);
+        } catch (IOException ex) {
+            this.jTextArea1.append("\nErro ao fechar a aplicação!!\nErro: " + ex.getMessage() + "\n");
+        }
     }//GEN-LAST:event_jButtonCloseActionPerformed
 
     private void jButtonJoinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJoinActionPerformed
@@ -179,7 +187,6 @@ public class MulticastChat extends javax.swing.JFrame {
         } catch (IOException ex) {
             this.jTextArea1.append("\nErro ao sair no grupo!!\nErro: " + ex.getMessage() + "\n");
         }
-
     }//GEN-LAST:event_jButtonLeaveActionPerformed
 
     private void jTextFieldMessageFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldMessageFocusGained
@@ -260,5 +267,4 @@ public class MulticastChat extends javax.swing.JFrame {
             this.jTextFieldMessage.setFocusable(true);
         }
     }
-
 }
