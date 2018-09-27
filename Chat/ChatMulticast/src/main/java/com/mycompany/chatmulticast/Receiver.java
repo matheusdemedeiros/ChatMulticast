@@ -8,6 +8,7 @@ package com.mycompany.chatmulticast;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;
+import java.util.Arrays;
 import javax.swing.JTextArea;
 
 /**
@@ -41,7 +42,7 @@ public class Receiver extends Thread {
                 this.areaChat.append("Erro ao receber a mensagem!!\nErro: " + ex.getMessage());
             }
             this.message = new String(this.msgIn.getData());
+            Arrays.fill(this.buffer, (byte) 0);
         }
     }
-
 }

@@ -29,7 +29,6 @@ public class ControllerChat {
         this.group = InetAddress.getByName(group);
         this.socket = new MulticastSocket(this.port);
         this.groupAddres = this.group.getHostName();
-
     }
 
     public void joinGroup() throws IOException {
@@ -65,5 +64,4 @@ public class ControllerChat {
     public DatagramPacket getMsgOut() {
         return msgOut;
     }
-
 }
