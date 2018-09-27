@@ -7,7 +7,6 @@ package com.mycompany.chatmulticast;
 
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,7 +20,6 @@ public class MulticastChat extends javax.swing.JFrame {
     public MulticastChat() {
         initComponents();
         getRootPane().setDefaultButton(this.jButtonSend);
-
     }
 
     /**
@@ -162,7 +160,6 @@ public class MulticastChat extends javax.swing.JFrame {
             this.jButtonJoin.setEnabled(false);
             this.receiver = new Receiver(this.jTextArea1, this.controllerChat.getSocket());
             this.receiver.start();
-
         } catch (IOException ex) {
             this.jTextArea1.append("\nErro ao entrar no grupo!!\nErro: " + ex.getMessage() + "\n");
         }
@@ -179,7 +176,6 @@ public class MulticastChat extends javax.swing.JFrame {
             this.jButtonLeave.setEnabled(false);
             this.jButtonSend.setEnabled(false);
             this.jButtonJoin.setEnabled(true);
-
         } catch (IOException ex) {
             this.jTextArea1.append("\nErro ao sair no grupo!!\nErro: " + ex.getMessage() + "\n");
         }
@@ -261,7 +257,6 @@ public class MulticastChat extends javax.swing.JFrame {
     public void keyReleased(KeyEvent ke) {
         if (ke.getKeyCode() == 13) {
             actionSend();
-            //this.jTextFieldMessage.setText("");
             this.jTextFieldMessage.setFocusable(true);
         }
     }

@@ -27,7 +27,6 @@ public class Receiver extends Thread {
         this.buffer = new byte[1024];
         this.areaChat = areaChat;
         this.socket = socket;
-
     }
 
     @Override
