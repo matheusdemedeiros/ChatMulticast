@@ -7,6 +7,7 @@ package com.mycompany.chatmulticast;
 
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,7 +20,7 @@ public class MulticastChat extends javax.swing.JFrame {
 
     public MulticastChat() {
         initComponents();
-        getRootPane().setDefaultButton(jButtonSend);
+        getRootPane().setDefaultButton(this.jButtonSend);
 
     }
 
@@ -159,7 +160,7 @@ public class MulticastChat extends javax.swing.JFrame {
             this.jButtonLeave.setEnabled(true);
             this.jButtonSend.setEnabled(true);
             this.jButtonJoin.setEnabled(false);
-            this.receiver = new Receiver(jTextArea1, this.controllerChat.getSocket());
+            this.receiver = new Receiver(this.jTextArea1, this.controllerChat.getSocket());
             this.receiver.start();
 
         } catch (IOException ex) {
@@ -168,13 +169,11 @@ public class MulticastChat extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonJoinActionPerformed
 
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
-
         actionSend();
     }//GEN-LAST:event_jButtonSendActionPerformed
 
     private void jButtonLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLeaveActionPerformed
         try {
-
             this.controllerChat.leaveGroup();
             this.jTextArea1.append("Saiu do grupo: " + this.jTextFieldMulticastAddress.getText() + "\n");
             this.jButtonLeave.setEnabled(false);
