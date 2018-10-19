@@ -36,7 +36,7 @@ public class Receiver extends Thread {
             try {
                 this.socket.receive(this.msgIn);
                 this.message = new String(this.msgIn.getData());
-                this.areaChat.append(this.msgIn.getAddress().getHostName() + " : " + this.message + "\n");
+                this.areaChat.append(this.message + "\n");
             } catch (IOException ex) {
                 this.areaChat.append("Erro ao receber a mensagem!!\nErro: " + ex.getMessage());
             }
