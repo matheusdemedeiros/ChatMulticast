@@ -5,6 +5,7 @@
  */
 package com.mycompany.chatmulticast;
 
+import criptografia.AESCript;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
@@ -16,6 +17,7 @@ public class MulticastChat extends javax.swing.JFrame {
 
     private ControllerChat controllerChat;
     private Receiver receiver;
+    private AESCript aes;
 
     public MulticastChat() {
         initComponents();
@@ -282,6 +284,7 @@ public class MulticastChat extends javax.swing.JFrame {
         if (!this.jTextFieldMessage.getText().isEmpty()) {
             try {
                 this.controllerChat.sendMessage(this.jTextFieldMessage.getText(), 1);
+                
                 this.jTextFieldMessage.setText("");
             } catch (IOException ex) {
                 this.jTextArea1.append("\nErro ao enviar mensagem!!\nErro: " + ex.getMessage() + "\n");

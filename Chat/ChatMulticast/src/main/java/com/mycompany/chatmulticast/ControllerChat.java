@@ -5,11 +5,17 @@
  */
 package com.mycompany.chatmulticast;
 
+import criptografia.AESCript;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 
 /**
  *
@@ -24,6 +30,7 @@ public class ControllerChat {
     private byte[] data;
     private DatagramPacket msgOut;
     private String userName;
+    private AESCript aes;
 
     public ControllerChat(int port, String group) throws UnknownHostException, IOException {
         this.port = port;
@@ -51,6 +58,7 @@ public class ControllerChat {
                 break;
             case 1:
                 message = (this.userName + " diz: " + message);
+
                 break;
             case 2:
                 message = (message + " saiu do grupo!");
