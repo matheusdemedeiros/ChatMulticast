@@ -1,4 +1,6 @@
 
+import criptografia.AESCript;
+import criptografia.CriptAES;
 import javax.crypto.*;
 import javax.crypto.spec.*;
 
@@ -26,26 +28,16 @@ public class Aes {
     }
 
     public static void main(String[] args) throws Exception {
-        String message = "This is just an example";
+        
+        String chave = "qqqqwwwweeeerrrr";
+        String message = "teste 1";
 
-        // Get the KeyGenerator
-        KeyGenerator kgen = KeyGenerator.getInstance("AES");
-        kgen.init(256);
+        String cript = CriptAES.encrypt(message, chave);
+        String origin = CriptAES.decrypt(cript, chave);
 
-        // Generate the secret key specs.
-        SecretKey skey = kgen.generateKey();
-        byte[] raw = skey.getEncoded();
-        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+        System.out.println("cript: " + cript);
 
-        // Instantiate the cipher
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        byte[] encrypted = cipher.doFinal(message.getBytes());
-        System.out.println("encrypted string: " + asHex(encrypted));
+        System.out.println("origin: " + origin);
 
-        cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-        byte[] original = cipher.doFinal(encrypted);
-        String originalString = new String(original);
-        System.out.println("Original string: " + originalString + " " + asHex(original));
     }
 }

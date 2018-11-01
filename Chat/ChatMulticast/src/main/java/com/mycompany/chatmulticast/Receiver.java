@@ -5,6 +5,7 @@
  */
 package com.mycompany.chatmulticast;
 
+import criptografia.CriptAES;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;
@@ -22,11 +23,13 @@ public class Receiver extends Thread {
     private String message;
     private JTextArea areaChat;
     private MulticastSocket socket;
+    private String chave;
 
-    public Receiver(JTextArea areaChat, MulticastSocket socket) {
+    public Receiver(JTextArea areaChat, MulticastSocket socket, String chave) {
         this.buffer = new byte[1024];
         this.areaChat = areaChat;
         this.socket = socket;
+        this.chave = chave;
     }
 
     @Override
@@ -35,7 +38,10 @@ public class Receiver extends Thread {
             this.msgIn = new DatagramPacket(this.buffer, this.buffer.length);
             try {
                 this.socket.receive(this.msgIn);
-                this.message = new String(this.msgIn.getData());
+                String aux = new String(this.msgIn.getData());
+                this.message = CriptAES.decrypt(aux, this.chave);
+                
+                
                 this.areaChat.append(this.message + "\n");
             } catch (IOException ex) {
                 this.areaChat.append("Erro ao receber a mensagem!!\nErro: " + ex.getMessage());

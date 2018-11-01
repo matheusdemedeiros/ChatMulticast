@@ -5,17 +5,12 @@
  */
 package com.mycompany.chatmulticast;
 
-import criptografia.AESCript;
+import criptografia.CriptAES;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
-import java.security.InvalidKeyException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 
 /**
  *
@@ -30,13 +25,14 @@ public class ControllerChat {
     private byte[] data;
     private DatagramPacket msgOut;
     private String userName;
-    private AESCript aes;
+    private String chave;
 
-    public ControllerChat(int port, String group) throws UnknownHostException, IOException {
+    public ControllerChat(int port, String group, String chave) throws UnknownHostException, IOException {
         this.port = port;
         this.group = InetAddress.getByName(group);
         this.socket = new MulticastSocket(this.port);
         this.groupAddres = this.group.getHostName();
+        this.chave = chave;
     }
 
     public void joinGroup(String userName) throws IOException {
@@ -65,7 +61,8 @@ public class ControllerChat {
                 break;
 
         }
-        this.data = message.getBytes();
+        String cript = CriptAES.encrypt(message, this.chave);
+        this.data = cript.getBytes();
         this.msgOut = new DatagramPacket(this.data, this.data.length, this.group, this.port);
         this.socket.send(this.msgOut);
     }

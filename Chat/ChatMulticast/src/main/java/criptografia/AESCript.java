@@ -45,11 +45,11 @@ public class AESCript {
         this.cipher = Cipher.getInstance(this.key);
     }
 
-    public String encrypt(String message) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+    public void encrypt(String message) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         this.cipher.init(Cipher.ENCRYPT_MODE, this.skeySpec);
         this.encrypted = this.cipher.doFinal(message.getBytes());
         System.out.println("encrypted string: " + asHex(this.encrypted));
-        return asHex(this.encrypted);
+        //return asHex(this.encrypted);
 
     }
 
@@ -57,7 +57,7 @@ public class AESCript {
         this.cipher.init(Cipher.DECRYPT_MODE, this.skeySpec);
         this.original = this.cipher.doFinal(this.encrypted);
         this.originalString = new String(this.original);
-        System.out.println("Original string: " + originalString + " " + asHex(original));
+        System.out.println("Original string: " + originalString);
     }
 
     public static String asHex(byte buf[]) {
