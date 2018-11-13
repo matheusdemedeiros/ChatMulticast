@@ -25,11 +25,11 @@ public class Receiver extends Thread {
     private MulticastSocket socket;
     private String chave;
 
-    public Receiver(JTextArea areaChat, MulticastSocket socket, String chave) {
+    public Receiver(JTextArea areaChat, MulticastSocket socket) {
         this.buffer = new byte[1024];
         this.areaChat = areaChat;
         this.socket = socket;
-        this.chave = chave;
+
     }
 
     @Override
@@ -39,9 +39,8 @@ public class Receiver extends Thread {
             try {
                 this.socket.receive(this.msgIn);
                 String aux = new String(this.msgIn.getData());
-                this.message = CriptAES.decrypt(aux, this.chave);
-                
-                
+                this.message = CriptAES.decrypt(aux);
+                System.out.println(message);
                 this.areaChat.append(this.message + "\n");
             } catch (IOException ex) {
                 this.areaChat.append("Erro ao receber a mensagem!!\nErro: " + ex.getMessage());

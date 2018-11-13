@@ -6,11 +6,11 @@
  */
 package criptografia;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Base64;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -20,47 +20,69 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class CriptAES {
 
-    private static SecretKeySpec chaveSecreta;
-    private static byte[] chave;
+    private static byte[] keyValue;
 
-    public static void setKey(String minhaChave) {
-        MessageDigest sha = null;
+    /**
+     * Encrypt a string with AES algorithm.
+     *
+     * @param data is a string
+     * @return the encrypted string
+     */
+    public static String encrypt(String data) {
+        Key key;
         try {
-            CriptAES.chave = minhaChave.getBytes("UTF-8");
-            sha = MessageDigest.getInstance("SHA-1");
-            CriptAES.chave = sha.digest(CriptAES.chave);
-            CriptAES.chave = Arrays.copyOf(CriptAES.chave, 16);
-            chaveSecreta = new SecretKeySpec(CriptAES.chave, "AES");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
+            key = generateKey();
 
-    public static String encrypt(String mensagem, String chave) {
-        try {
-            setKey(chave);
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, chaveSecreta);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(mensagem.getBytes("UTF-8")));
-        } catch (Exception e) {
-            System.out.println("Erro durante a encriptação: " + e.toString());
+            Cipher c = Cipher.getInstance("AES");
+            c.init(Cipher.ENCRYPT_MODE, key);
+            byte[] encVal = c.doFinal(data.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(encVal);
+        } catch (Exception ex) {
+            Logger.getLogger(CriptAES.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
-    public static String decrypt(String mensagem, String chave) {
+    /**
+     * Decrypt a string with AES algorithm.
+     *
+     * @param encryptedData is a string
+     * @return the decrypted string
+     */
+    public static String decrypt(String encryptedData) {
+        Key key;
         try {
-            setKey(chave);
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
-            cipher.init(Cipher.DECRYPT_MODE, chaveSecreta);
-            String retorno = new String(cipher.doFinal(Base64.getDecoder().decode(mensagem)));
-            System.out.println("retorno " + retorno);
-            return retorno;
-        } catch (Exception e) {
-            System.out.println("Erro durante a desencriptação: " + e.toString());
+            key = generateKey();
+
+            Cipher c = Cipher.getInstance("AES");
+            c.init(Cipher.DECRYPT_MODE, key);
+            byte[] decordedValue = Base64.getMimeDecoder().decode(encryptedData);
+            byte[] decValue = c.doFinal(decordedValue);
+            return new String(decValue, StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+            Logger.getLogger(CriptAES.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
+
+    /**
+     * Generate a new encryption key.
+     */
+    private static Key generateKey() throws Exception {
+        return new SecretKeySpec(keyValue, "AES");
+    }
+
+    public static void setChave(String key) {
+        if (key.length() < 16) {
+            while (key.length() < 16) {
+                key = key.concat("X");
+            }
+        }
+        CriptAES.keyValue = key.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static String getChave() {
+        return new String(keyValue, StandardCharsets.UTF_8);
+    }
+
 }
