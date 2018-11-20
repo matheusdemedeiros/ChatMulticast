@@ -8,8 +8,6 @@ package com.mycompany.chatmulticast;
 import criptografia.CriptAES;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -46,8 +44,6 @@ public class MulticastChat extends javax.swing.JFrame {
         jButtonSend = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jTextFieldUsuario = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jTextFieldChaveAES = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Multicast Chat");
@@ -107,15 +103,6 @@ public class MulticastChat extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setText("Chave (AES):");
-
-        jTextFieldChaveAES.setText("qqqqwwwweeeerrrr");
-        jTextFieldChaveAES.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldChaveAESActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -131,16 +118,9 @@ public class MulticastChat extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonClose))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(81, 81, 81)
                         .addComponent(jTextFieldUsuario))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(51, 51, 51)
-                        .addComponent(jTextFieldChaveAES))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -148,7 +128,10 @@ public class MulticastChat extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonJoin, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonLeave)))
+                        .addComponent(jButtonLeave))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -169,11 +152,7 @@ public class MulticastChat extends javax.swing.JFrame {
                     .addComponent(jTextFieldUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextFieldChaveAES, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -191,6 +170,8 @@ public class MulticastChat extends javax.swing.JFrame {
 
     private void jButtonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseActionPerformed
         try {
+            //Fazendo as verificações para poder fechar o socket sempre
+            //que sair da aplicação.
             if (controllerChat.getSocket().getInetAddress() != null) {
                 controllerChat.getSocket().leaveGroup(controllerChat.getGroup());
             }
@@ -204,12 +185,19 @@ public class MulticastChat extends javax.swing.JFrame {
     private void jButtonJoinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJoinActionPerformed
         String retorno = "";
         try {
+            //Obtendo a chave a partir de uma conexão https
             retorno = ConnectionHttps.getKey();
+
+            System.out.println("Retorno chave do servidor: " + retorno);
             
-        System.out.println("Retorno chave do servidor: " + retorno);
+            //Inicializando o objeto que irá controlar toda a parte de entrada em grupos e envios de mensagens
             this.controllerChat = new ControllerChat(50000, this.jTextFieldMulticastAddress.getText(), retorno);
-            System.out.println("Chave completa encripto: "+CriptAES.getChave());
+            System.out.println("Chave completa encripto: " + CriptAES.getChave());
+            
+            //Entrando no grupo
             this.controllerChat.joinGroup(jTextFieldUsuario.getText());
+            
+            //Habilitando os botões na tela
             this.jButtonLeave.setEnabled(true);
             this.jButtonSend.setEnabled(true);
             this.jButtonJoin.setEnabled(false);
@@ -238,10 +226,6 @@ public class MulticastChat extends javax.swing.JFrame {
     private void jTextFieldMessageFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldMessageFocusGained
 
     }//GEN-LAST:event_jTextFieldMessageFocusGained
-
-    private void jTextFieldChaveAESActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldChaveAESActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldChaveAESActionPerformed
 
     private void jTextFieldUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldUsuarioActionPerformed
         // TODO add your handling code here:
@@ -301,10 +285,8 @@ public class MulticastChat extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextFieldChaveAES;
     private javax.swing.JTextField jTextFieldMessage;
     private javax.swing.JTextField jTextFieldMulticastAddress;
     private javax.swing.JTextField jTextFieldUsuario;

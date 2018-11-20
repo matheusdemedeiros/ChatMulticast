@@ -72,7 +72,9 @@ public class ConnectionHttps {
             url = new URL(urlPath);
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 
+            
             con.setRequestMethod("GET");
+            
             //con.setRequestProperty("Content-Type", "application/json");
 
             if (con.getResponseCode() == 200) {
